@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5>新闻列表</h5>
+                <div>
+                    <select id="categorySelect" class="form-select form-select-sm d-inline-block w-auto">
+                        <option value="rensheyaowen">人社要闻</option>
+                        <option value="yewudongtai">业务动态</option>
+                        <option value="yvlunshengying">舆论声音</option>
+                        <option value="shengneidongxiang">省内动向</option>
+                    </select>
+                    <button id="loadNewsBtn" class="btn btn-primary btn-sm ms-2">
+                        <i class="bi bi-arrow-repeat"></i> 加载新闻
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <input type="text" id="searchInput" class="form-control" placeholder="搜索新闻标题...">
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>标题</th>
+                                <th>来源</th>
+                                <th>发布时间</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="newsList">
+                            <!-- 新闻列表将通过JavaScript动态加载 -->
+                        </tbody>
+                    </table>
+                </div>
+                <nav>
+                    <ul class="pagination justify-content-center" id="pagination">
+                        <!-- 分页控件将通过JavaScript动态加载 -->
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card mb-3">
+            <div class="card-header bg-success text-white">
+                <h5>人社要闻</h5>
+            </div>
+            <div class="card-body dropzone" id="rensheyaowen-box" data-category="rensheyaowen">
+                <div class="selected-news-list">
+                    <!-- 已选新闻将通过JavaScript动态加载 -->
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-header bg-info text-white">
+                <h5>业务动态</h5>
+            </div>
+            <div class="card-body dropzone" id="yewudongtai-box" data-category="yewudongtai">
+                <div class="selected-news-list">
+                    <!-- 已选新闻将通过JavaScript动态加载 -->
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-header bg-warning text-dark">
+                <h5>舆论声音</h5>
+            </div>
+            <div class="card-body dropzone" id="yvlunshengying-box" data-category="yvlunshengying">
+                <div class="selected-news-list">
+                    <!-- 已选新闻将通过JavaScript动态加载 -->
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-header bg-secondary text-white">
+                <h5>省内动向</h5>
+            </div>
+            <div class="card-body dropzone" id="shengneidongxiang-box" data-category="shengneidongxiang">
+                <div class="selected-news-list">
+                    <!-- 已选新闻将通过JavaScript动态加载 -->
+                </div>
+            </div>
+        </div>
+
+        <div class="d-grid gap-2">
+            <button id="generateBtn" class="btn btn-primary btn-lg">
+                <i class="bi bi-magic"></i> 一键生成
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- 选择板块模态框 -->
+<div class="modal fade" id="categoryModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">选择板块</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>请选择要将新闻添加到的板块：</p>
+                <div class="list-group">
+                    <a href="#" class="list-group-item list-group-item-action" data-category="rensheyaowen">人社要闻</a>
+                    <a href="#" class="list-group-item list-group-item-action" data-category="yewudongtai">业务动态</a>
+                    <a href="#" class="list-group-item list-group-item-action" data-category="yvlunshengying">舆论声音</a>
+                    <a href="#" class="list-group-item list-group-item-action" data-category="shengneidongxiang">省内动向</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+<!--{% block scripts %}-->
+<!--<script src="/static/js/index.js"></script>-->
+<!--{% endblock %}-->

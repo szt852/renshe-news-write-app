@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5>生成人社资讯内容</h5>
+                <p class="mb-0">当前生成: <span class="badge bg-primary" id="currentCategory"></span></p>
+
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label">选择模型:</label>
+                    <select id="modelSelect" class="form-select">
+                        <option value="deepseek-v3">DeepSeek-V3</option>
+                        <option value="deepseek-r1">DeepSeek-R1</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <h6>用于生成内容的新闻:</h6>
+                    <div id="selectedNewsList" class="border p-2 bg-light">
+                        <!-- 选择的新闻列表将通过JavaScript动态加载 -->
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <button id="generateContentBtn" class="btn btn-primary">
+                        <i class="bi bi-robot"></i> 生成内容
+                    </button>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">生成的内容:</label>
+                    <div id="loadingIndicator" class="text-center mb-2" style="display: none;">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">生成中...</span>
+                        </div>
+                        <p class="mt-2">正在生成内容，请稍候...</p>
+                    </div>
+                    <textarea id="generatedContent" class="form-control" rows="10"></textarea>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <button id="backBtn" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left"></i> 返回重新选择
+                    </button>
+
+                    <button id="saveContentBtn" class="btn btn-success">
+                        <i class="bi bi-check-circle"></i> 保存内容
+                    </button>
+
+                    <button id="nextCategoryBtn" class="btn btn-primary">
+                        下一个板块 <i class="bi bi-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/generate.js"></script>
+{% endblock %}
+
+
