@@ -36,12 +36,10 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             // 从数据库获取生成的内容
             const contentIds = Object.values(generatedContents).join(',');
-            alert(contentIds)
 
             const response = await fetch(`/api/get_generated_contents?content_ids=${contentIds}`);
-//            alert(response)
             if (!response.ok) {
-                alert(`获取内容失败: ${response.statusText}`)
+                console.error(`获取内容失败: ${response.statusText}`);
                 throw new Error(`获取内容失败: ${response.statusText}`);
             }
 

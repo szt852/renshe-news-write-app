@@ -1,8 +1,19 @@
 version: '3'
 services:
   my_service:
-    container_name: renshe-news-write # 指定容器名称
-    image: renshe-news-write-app:latest
+    container_name: renshe-news-write
+    image: renshe-news-write-app
     ports:
       - "4405:4405"
     restart: always
+    environment:
+      NEWS_API_HOST: ""
+      QWEN3_API_URL: ""
+      QWEN3_API_KEY: ""
+      QWEN3_MODEL_NAME: "qwen3"
+      DEEPSEEK_API_URL: "https://api.deepseek.com/v1/chat/completions"
+      DEEPSEEK_MODEL_NAME: "deepseek-chat"
+      DATABASE_URL: ""
+    volumes:
+      - /usr/local/bin/renshe-news-write/exports:/code/exports
+      # - /usr/local/bin/renshe-news-write/fonts:/code/fonts

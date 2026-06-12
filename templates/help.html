@@ -1,0 +1,239 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <!-- 页面标题 -->
+        <div class="text-center mb-4">
+            <h2><i class="bi bi-question-circle text-primary"></i> 使用帮助</h2>
+            <p class="text-muted">了解数据来源、系统功能和操作流程，快速上手《每周人社资讯》生成</p>
+        </div>
+
+        <!-- 三步流程概览 -->
+        <div class="card mb-4 border-primary">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-lightning-charge"></i> 三步快速上手</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-4 mb-3 mb-md-0">
+                        <div class="p-3">
+                            <div class="display-4 text-primary">1</div>
+                            <h5>选择新闻</h5>
+                            <p class="text-muted small">浏览新闻列表，将感兴趣的新闻拖拽或点击选择到右侧四个板块中</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3 mb-md-0">
+                        <div class="p-3">
+                            <div class="display-4 text-success">2</div>
+                            <h5>AI 生成内容</h5>
+                            <p class="text-muted small">选择模型（本地 Qwen3 或云端 DeepSeek），一键生成各板块资讯内容</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3">
+                            <div class="display-4 text-danger">3</div>
+                            <h5>导出文档</h5>
+                            <p class="text-muted small">预览并编辑内容，导出符合公文格式的 Word 或 PDF 文档</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- 数据来源 -->
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0"><i class="bi bi-database"></i> 数据来源</h5>
+                    </div>
+                    <div class="card-body">
+                        <p>系统从内部新闻采集服务实时获取以下四个板块的新闻数据：</p>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <span class="badge bg-success">人社要闻</span>
+                                <span class="small text-muted ms-2">人社部及国家层面的重要政策、会议、活动</span>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="badge bg-info">业务动态</span>
+                                <span class="small text-muted ms-2">各地人社部门的业务创新与服务举措</span>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="badge bg-warning text-dark">舆论声音</span>
+                                <span class="small text-muted ms-2">主流媒体对人社工作的报道与评价</span>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="badge bg-secondary">省内动向</span>
+                                <span class="small text-muted ms-2">本省人社领域的重要动态与举措</span>
+                            </li>
+                        </ul>
+                        <div class="alert alert-light border mt-3 mb-0 small">
+                            <i class="bi bi-info-circle"></i>
+                            新闻数据会自动缓存到本地数据库，API 不可用时优先使用缓存数据。
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 系统功能 -->
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0"><i class="bi bi-stars"></i> 系统功能</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <i class="bi bi-search text-primary"></i>
+                                <strong>新闻浏览与搜索</strong>
+                                <div class="small text-muted">按板块加载新闻，支持标题关键词实时过滤</div>
+                            </li>
+                            <li class="list-group-item">
+                                <i class="bi bi-hand-thumbs-up text-primary"></i>
+                                <strong>拖拽 / 点击选择</strong>
+                                <div class="small text-muted">支持拖拽新闻到板块，或点击按钮选择目标板块</div>
+                            </li>
+                            <li class="list-group-item">
+                                <i class="bi bi-robot text-primary"></i>
+                                <strong>AI 智能生成</strong>
+                                <div class="small text-muted">内置专业 Prompt，生成符合政府公文风格的资讯</div>
+                            </li>
+                            <li class="list-group-item">
+                                <i class="bi bi-cpu text-primary"></i>
+                                <strong>双模型支持</strong>
+                                <div class="small text-muted">默认本地 <b>Qwen3</b>（免 Key）；可选云端 <b>DeepSeek</b>（需 API Key）</div>
+                            </li>
+                            <li class="list-group-item">
+                                <i class="bi bi-pencil-square text-primary"></i>
+                                <strong>在线编辑</strong>
+                                <div class="small text-muted">生成内容支持人工修改、微调，修改自动保存</div>
+                            </li>
+                            <li class="list-group-item">
+                                <i class="bi bi-file-earmark-word text-primary"></i>
+                                <strong>公文格式导出</strong>
+                                <div class="small text-muted">一键导出 Word / PDF，内置仿宋_GB2312、方正小标宋简体</div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 如何操作 -->
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-header bg-warning text-dark">
+                        <h5 class="mb-0"><i class="bi bi-book"></i> 如何操作</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="accordion" id="helpAccordion">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne">
+                                        <i class="bi bi-1-circle me-2"></i>首页 — 选择新闻
+                                    </button>
+                                </h2>
+                                <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#helpAccordion">
+                                    <div class="accordion-body small">
+                                        <ol class="ps-3 mb-0">
+                                            <li>左上角下拉框选择板块，点击<b>「加载新闻」</b></li>
+                                            <li>可输入关键词<b>搜索</b>过滤新闻标题</li>
+                                            <li><b>拖拽</b>新闻到右侧板块，或点击<b>「选择」</b>按钮</li>
+                                            <li>点击新闻标题可<b>查看原文</b>（新标签页打开）</li>
+                                            <li>点击已选新闻的 <b>×</b> 可移除</li>
+                                            <li>至少选择一个板块后，点击<b>「一键生成」</b></li>
+                                        </ol>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo">
+                                        <i class="bi bi-2-circle me-2"></i>生成页 — AI 撰写
+                                    </button>
+                                </h2>
+                                <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#helpAccordion">
+                                    <div class="accordion-body small">
+                                        <ol class="ps-3 mb-0">
+                                            <li>选择<b>模型</b>：默认「Qwen3 (本地)」无需配置；选「DeepSeek (云端)」需输入 API Key</li>
+                                            <li>点击<b>「生成内容」</b>，等待 AI 返回结果（约 10~30 秒）</li>
+                                            <li>在文本框中<b>编辑</b>生成的内容</li>
+                                            <li>点击<b>「保存内容」</b>将修改写入数据库</li>
+                                            <li>点击<b>「下一个板块」</b>继续生成其他板块</li>
+                                            <li>全部完成后自动进入导出页</li>
+                                        </ol>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree">
+                                        <i class="bi bi-3-circle me-2"></i>导出页 — 下载文档
+                                    </button>
+                                </h2>
+                                <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#helpAccordion">
+                                    <div class="accordion-body small">
+                                        <ol class="ps-3 mb-0">
+                                            <li>可修改<b>资讯标题</b>（如「第X期每周人社资讯」）</li>
+                                            <li>在预览区<b>直接点击编辑</b>各板块内容，修改自动保存</li>
+                                            <li>点击<b>「导出Word文档」</b>或<b>「导出PDF」</b></li>
+                                            <li>浏览器自动下载，文件保存在 <code>exports/</code> 目录</li>
+                                            <li>如需重新选择新闻，点击<b>「返回重新选择」</b></li>
+                                        </ol>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部提示 -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <h6><i class="bi bi-lightbulb text-warning"></i> 使用小贴士</h6>
+                <div class="row">
+                    <div class="col-md-6">
+                        <ul class="mb-0 small">
+                            <li>每个板块生成后建议先<b>保存</b>，再进入下一个板块</li>
+                            <li>AI 生成内容仅供参考，发布前务必<b>人工审核</b></li>
+                            <li>生成过程需调用外部 API，请确保<b>网络连接稳定</b></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <ul class="mb-0 small">
+                            <li>DeepSeek API Key 仅用于当前会话，不会保存到服务器</li>
+                            <li>如遇问题，可尝试刷新页面或返回首页重新操作</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Windows 字体安装步骤 -->
+                <div class="mt-3">
+                    <a class="small text-decoration-none" data-bs-toggle="collapse" href="#fontInstallHelp" role="button">
+                        <i class="bi bi-chevron-down"></i> 导出文档中文显示异常？点击查看 Windows 字体安装方法
+                    </a>
+                    <div class="collapse mt-2" id="fontInstallHelp">
+                        <div class="alert alert-light border small mb-0">
+                            <p class="mb-2"><strong>1. 下载字体文件</strong></p>
+                            <p class="mb-2">点击顶部导航栏 <b>「下载字体 ▼」</b>，分别下载 <code>仿宋_GB2312</code> 和 <code>方正小标宋简体</code> 两个字体文件（.TTF 格式）。</p>
+
+                            <p class="mb-2"><strong>2. 安装字体（Windows 系统）</strong></p>
+                            <ol class="ps-3 mb-2">
+                                <li>打开<b>下载文件夹</b>，找到下载好的 <code>仿宋_GB2312.TTF</code> 和 <code>方正小标宋简体.TTF</code> 文件。</li>
+                                <li><b>方法一（推荐）：</b>选中字体文件 → 点击鼠标<b>右键</b> → 选择 <b>「为所有用户安装」</b>（Windows 10/11）或 <b>「安装」</b>（Windows 7/8）。</li>
+                                <li><b>方法二：</b>同时按 <kbd>Win</kbd> + <kbd>R</kbd> 键，输入 <code>fonts</code> 回车，打开字体文件夹 → 将下载的 .TTF 文件<b>拖拽</b>进去即可。</li>
+                                <li>安装完成后，<b>重启本系统</b>（或刷新页面），重新导出文档即可正常显示。</li>
+                            </ol>
+
+                            <p class="mb-0"><strong>3. 验证安装</strong></p>
+                            <p class="mb-0">打开 Word 或 WPS → 点击字体下拉框 → 搜索 "仿宋_GB2312"，如果能找到说明安装成功。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -13,9 +13,28 @@
                 <div class="mb-3">
                     <label class="form-label">选择模型:</label>
                     <select id="modelSelect" class="form-select">
-                        <option value="deepseek-v3">DeepSeek-V3</option>
-                        <option value="deepseek-r1">DeepSeek-R1</option>
+                        <option value="qwen3">Qwen3 (本地)</option>
+                        <option value="deepseek">DeepSeek (云端)</option>
                     </select>
+                </div>
+
+                <div class="mb-3" id="apiKeyBox" style="display: none;">
+                    <label class="form-label">DeepSeek API Key:</label>
+                    <div class="input-group">
+                        <input type="password" id="userApiKey" class="form-control" placeholder="请输入您的 DeepSeek API Key">
+                        <button class="btn btn-outline-secondary" type="button" id="toggleApiKeyBtn">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                        <button class="btn btn-outline-success" type="button" id="saveApiKeyBtn">
+                            <i class="bi bi-save"></i> 保存
+                        </button>
+                    </div>
+                    <div class="d-flex justify-content-between mt-1">
+                        <div class="form-text text-muted">如未输入，将尝试使用环境变量配置的 Key</div>
+                        <div class="form-text text-success" id="apiKeySaveStatus" style="display: none;">
+                            <i class="bi bi-check-circle"></i> 已保存到本地
+                        </div>
+                    </div>
                 </div>
 
                 <div class="mb-3">
@@ -59,10 +78,30 @@
         </div>
     </div>
 </div>
+
+<!-- 查看/编辑抓取正文弹窗 -->
+<div class="modal fade" id="newsContentModal" tabindex="-1" aria-labelledby="newsContentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="newsContentModalLabel">查看/编辑抓取内容</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted small">您可以直接修改下方的抓取内容，保存后将以您输入的内容参与生成。</p>
+                <textarea id="scrapedContentTextarea" class="form-control" rows="15"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                <button type="button" id="saveScrapedContentBtn" class="btn btn-primary">保存修改</button>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
-<script src="/static/js/generate.js"></script>
+<script src="/static/js/generate.js?v=3"></script>
 {% endblock %}
 
 

@@ -1,0 +1,14 @@
+# 环境/配置
+.env
+.venv/
+.idea/
+__pycache__/
+*.pyc
+
+# 运行产物
+exports/
+*.db
+*.tar
+
+# 其他
+.DS_Store

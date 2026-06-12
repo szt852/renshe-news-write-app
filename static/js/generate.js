@@ -4,8 +4,68 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentCategoryIndex = 0;
     let generatedContents = {};
 
+    // 弹窗相关元素
+    const newsContentModalEl = document.getElementById('newsContentModal');
+    const newsContentModal = new bootstrap.Modal(newsContentModalEl);
+    const scrapedContentTextarea = document.getElementById('scrapedContentTextarea');
+    const saveScrapedContentBtn = document.getElementById('saveScrapedContentBtn');
+    let currentEditingUrl = null;
+
     // 初始化页面
     initPage();
+
+    // 模型选择切换：控制 API Key 输入框显示/隐藏
+    const modelSelect = document.getElementById('modelSelect');
+    const apiKeyBox = document.getElementById('apiKeyBox');
+
+    function updateApiKeyBoxVisibility() {
+        if (modelSelect.value === 'deepseek') {
+            apiKeyBox.style.display = 'block';
+        } else {
+            apiKeyBox.style.display = 'none';
+        }
+    }
+
+    // 页面加载时立即根据当前选中值设置状态
+    updateApiKeyBoxVisibility();
+
+    modelSelect.addEventListener('change', updateApiKeyBoxVisibility);
+
+    // 从 localStorage 恢复已保存的 API Key
+    const savedApiKey = localStorage.getItem('deepseek_api_key');
+    if (savedApiKey) {
+        document.getElementById('userApiKey').value = savedApiKey;
+    }
+
+    // 显示/隐藏密码
+    document.getElementById('toggleApiKeyBtn').addEventListener('click', function() {
+        const input = document.getElementById('userApiKey');
+        const icon = this.querySelector('i');
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.remove('bi-eye');
+            icon.classList.add('bi-eye-slash');
+        } else {
+            input.type = 'password';
+            icon.classList.remove('bi-eye-slash');
+            icon.classList.add('bi-eye');
+        }
+    });
+
+    // 保存 API Key 到 localStorage
+    document.getElementById('saveApiKeyBtn').addEventListener('click', function() {
+        const apiKey = document.getElementById('userApiKey').value.trim();
+        if (apiKey) {
+            localStorage.setItem('deepseek_api_key', apiKey);
+        } else {
+            localStorage.removeItem('deepseek_api_key');
+        }
+        const status = document.getElementById('apiKeySaveStatus');
+        status.style.display = 'block';
+        setTimeout(function() {
+            status.style.display = 'none';
+        }, 2000);
+    });
 
     // 返回按钮事件
     document.getElementById('backBtn').addEventListener('click', function() {
@@ -23,11 +83,9 @@ document.addEventListener('DOMContentLoaded', function() {
         let hasNews = false;
         for (const cat of categories) {
             if (selectedNews[cat] && selectedNews[cat].length > 0) {
-//                alert(selectedNews[cat]);
                 hasNews = true;
                 break;
             }
-
         }
 
         if (!hasNews) {
@@ -38,12 +96,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // 显示第一个有新闻的类别
         while (currentCategoryIndex < categories.length) {
-//        alert(111);
             const category = categories[currentCategoryIndex];
-//            alert(currentCategoryIndex);
-//            alert(category);
             if (selectedNews[category] && selectedNews[category].length > 0) {
-//                alert(222);
                 showCategory(category);
                 break;
             }
@@ -54,6 +108,12 @@ document.addEventListener('DOMContentLoaded', function() {
         if (currentCategoryIndex >= categories.length) {
             finishGeneration();
         }
+    }
+
+    function updateGenerateButtonState() {
+        const category = categories[currentCategoryIndex];
+        const hasItems = selectedNews[category] && selectedNews[category].length > 0;
+        document.getElementById('generateContentBtn').disabled = !hasItems;
     }
 
     function showCategory(category) {
@@ -69,32 +129,6 @@ document.addEventListener('DOMContentLoaded', function() {
         // 显示选中的新闻
         const newsList = document.getElementById('selectedNewsList');
         newsList.innerHTML = '';
-//        alert(newsList);
-
-//        selectedNews[category].forEach(newsUrl => {
-//            alert(newsUrl)
-//            // 查找新闻信息
-//            const allNews = JSON.parse(sessionStorage.getItem('allNews') || '[]');
-//            alert(allNews)
-//            const news = allNews.find(n => n.新闻链接 === newsUrl);
-//
-//            if (news) {
-//                const item = document.createElement('div');
-//                item.className = 'border-bottom pb-2 mb-2';
-//                item.innerHTML = `
-//                    <div class="fw-bold">${news.新闻标题}</div>
-//                    <div class="small text-muted">${news.新闻来源} | ${news.发布时间}</div>
-//                    <a href="${news.新闻链接}" target="_blank" class="small">查看原文</a>
-//                `;
-//                newsList.appendChild(item);
-//            } else {
-//                const item = document.createElement('div');
-//                item.className = 'border-bottom pb-2 mb-2';
-//                item.textContent = `新闻URL: ${newsUrl}`;
-//                newsList.appendChild(item);
-//            }
-//        });
-
 
         // 修改后的函数，从数据库获取新闻信息
         selectedNews[category].forEach(newsUrl => {
@@ -112,9 +146,17 @@ document.addEventListener('DOMContentLoaded', function() {
                         </div>
                         <span class="text-muted">加载新闻信息...</span>
                     </div>
-                    <a href="${newsUrl}" target="_blank" class="btn btn-sm btn-outline-secondary">
-                        <i class="bi bi-box-arrow-up-right"></i> 查看原文
-                    </a>
+                    <div class="d-flex">
+                        <button type="button" class="btn btn-sm btn-outline-info ms-2 btn-view-content" data-news-url="${newsUrl}">
+                            <i class="bi bi-file-text"></i> 查看正文
+                        </button>
+                        <a href="${newsUrl}" target="_blank" class="btn btn-sm btn-outline-secondary ms-2">
+                            <i class="bi bi-box-arrow-up-right"></i> 查看原文
+                        </a>
+                        <button type="button" class="btn btn-sm btn-outline-danger ms-2 btn-delete-news" data-news-url="${newsUrl}">
+                            <i class="bi bi-trash"></i> 删除
+                        </button>
+                    </div>
                 </div>
             `;
 
@@ -123,6 +165,8 @@ document.addEventListener('DOMContentLoaded', function() {
             // 从数据库获取新闻详细信息
             fetchNewsInfo(newsUrl, item);
         });
+
+        updateGenerateButtonState();
 
         // 新增函数：从数据库获取新闻信息
         async function fetchNewsInfo(newsUrl, itemElement) {
@@ -141,9 +185,17 @@ document.addEventListener('DOMContentLoaded', function() {
                             <div class="fw-bold">${newsInfo.title || '未知标题'}</div>
                             <div class="small text-muted">${newsInfo.source || '未知来源'} | ${newsInfo.publish_date || '未知日期'}</div>
                         </div>
-                        <a href="${newsUrl}" target="_blank" class="btn btn-sm btn-outline-secondary ms-2">
-                            <i class="bi bi-box-arrow-up-right"></i> 查看
-                        </a>
+                        <div class="d-flex">
+                            <button type="button" class="btn btn-sm btn-outline-info ms-2 btn-view-content" data-news-url="${newsUrl}">
+                                <i class="bi bi-file-text"></i> 查看正文
+                            </button>
+                            <a href="${newsUrl}" target="_blank" class="btn btn-sm btn-outline-secondary ms-2">
+                                <i class="bi bi-box-arrow-up-right"></i> 查看
+                            </a>
+                            <button type="button" class="btn btn-sm btn-outline-danger ms-2 btn-delete-news" data-news-url="${newsUrl}">
+                                <i class="bi bi-trash"></i> 删除
+                            </button>
+                        </div>
                     </div>
                 `;
             } catch (error) {
@@ -151,9 +203,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 itemElement.innerHTML = `
                     <div class="d-flex justify-content-between align-items-center">
                         <div class="text-muted">无法获取新闻信息: ${newsUrl}</div>
-                        <a href="${newsUrl}" target="_blank" class="btn btn-sm btn-outline-secondary">
-                            <i class="bi bi-box-arrow-up-right"></i> 查看原文
-                        </a>
+                        <div class="d-flex">
+                            <button type="button" class="btn btn-sm btn-outline-info ms-2 btn-view-content" data-news-url="${newsUrl}">
+                                <i class="bi bi-file-text"></i> 查看正文
+                            </button>
+                            <a href="${newsUrl}" target="_blank" class="btn btn-sm btn-outline-secondary ms-2">
+                                <i class="bi bi-box-arrow-up-right"></i> 查看原文
+                            </a>
+                            <button type="button" class="btn btn-sm btn-outline-danger ms-2 btn-delete-news" data-news-url="${newsUrl}">
+                                <i class="bi bi-trash"></i> 删除
+                            </button>
+                        </div>
                     </div>
                 `;
             }
@@ -163,11 +223,123 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('generatedContent').value = '';
     }
 
+    // 事件委托：查看正文、删除
+    document.getElementById('selectedNewsList').addEventListener('click', function(e) {
+        const viewBtn = e.target.closest('.btn-view-content');
+        const deleteBtn = e.target.closest('.btn-delete-news');
+        if (viewBtn) {
+            e.preventDefault();
+            openContentModal(viewBtn.dataset.newsUrl);
+        }
+        if (deleteBtn) {
+            e.preventDefault();
+            deleteNews(deleteBtn.dataset.newsUrl);
+        }
+    });
+
+    async function openContentModal(newsUrl) {
+        currentEditingUrl = newsUrl;
+        scrapedContentTextarea.value = '正在加载正文内容...';
+        saveScrapedContentBtn.disabled = true;
+        newsContentModal.show();
+
+        try {
+            const response = await fetch(`/api/news_content?url=${encodeURIComponent(newsUrl)}`);
+            if (!response.ok) {
+                throw new Error(`加载正文失败: ${response.statusText}`);
+            }
+            const data = await response.json();
+            scrapedContentTextarea.value = data.content || '';
+            saveScrapedContentBtn.disabled = false;
+        } catch (error) {
+            console.error('加载正文失败:', error);
+            scrapedContentTextarea.value = '无法加载正文内容，您可以直接在此处粘贴内容并保存。';
+            saveScrapedContentBtn.disabled = false;
+        }
+    }
+
+    saveScrapedContentBtn.addEventListener('click', async function() {
+        if (!currentEditingUrl) {
+            alert('未选择新闻');
+            return;
+        }
+
+        const content = scrapedContentTextarea.value;
+        saveScrapedContentBtn.disabled = true;
+
+        try {
+            const response = await fetch('/api/news_content', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    'url': currentEditingUrl,
+                    'content': content
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`保存失败: ${response.statusText}`);
+            }
+
+            alert('正文内容已保存，将以您输入的内容参与生成。');
+            newsContentModal.hide();
+        } catch (error) {
+            console.error('保存正文失败:', error);
+            alert('保存正文失败，请稍后重试');
+        } finally {
+            saveScrapedContentBtn.disabled = false;
+        }
+    });
+
+    function deleteNews(newsUrl) {
+        if (!confirm('确定要删除这条新闻吗？删除后将不再参与生成。')) {
+            return;
+        }
+
+        const category = categories[currentCategoryIndex];
+        const index = selectedNews[category].indexOf(newsUrl);
+        if (index > -1) {
+            selectedNews[category].splice(index, 1);
+            sessionStorage.setItem('selectedNews', JSON.stringify(selectedNews));
+        }
+
+        const itemElement = document.getElementById(`news-item-${encodeURIComponent(newsUrl)}`);
+        if (itemElement) {
+            itemElement.remove();
+        }
+
+        const newsList = document.getElementById('selectedNewsList');
+        if (!selectedNews[category] || selectedNews[category].length === 0) {
+            newsList.innerHTML = `
+                <div class="text-muted text-center py-3">
+                    当前分类没有新闻，请点击“下一个板块”继续。
+                </div>
+            `;
+        }
+
+        updateGenerateButtonState();
+    }
+
     // 生成内容按钮事件
     document.getElementById('generateContentBtn').addEventListener('click', async function() {
         const category = categories[currentCategoryIndex];
-        const model = document.getElementById('modelSelect').value;
+        const modelProvider = document.getElementById('modelSelect').value;
+        const userApiKey = document.getElementById('userApiKey').value;
+
+        if (!selectedNews[category] || selectedNews[category].length === 0) {
+            alert('当前分类没有新闻可供生成');
+            return;
+        }
+
         const news_urls = selectedNews[category].join(',');
+
+        // 校验：选择 deepseek 时必须输入 API Key
+        if (modelProvider === 'deepseek' && !userApiKey.trim()) {
+            alert('使用 DeepSeek 模型需要输入 API Key，或联系管理员配置环境变量');
+            return;
+        }
 
         // 显示加载指示器
         document.getElementById('loadingIndicator').style.display = 'block';
@@ -183,7 +355,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 body: new URLSearchParams({
                     'category': category,
                     'news_urls': news_urls,
-                    'model': model
+                    'model_provider': modelProvider,
+                    'user_api_key': userApiKey
                 })
             });
 
@@ -207,7 +380,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // 隐藏加载指示器
             document.getElementById('loadingIndicator').style.display = 'none';
             document.getElementById('generatedContent').style.display = 'block';
-            document.getElementById('generateContentBtn').disabled = false;
+            updateGenerateButtonState();
         }
     });
 
@@ -233,7 +406,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
             alert('内容保存成功');
-//            console.log('内容保存成功')
         } catch (error) {
             console.error('保存内容失败:', error);
             alert('保存内容失败，请稍后重试');
@@ -262,5 +434,3 @@ document.addEventListener('DOMContentLoaded', function() {
         window.location.href = '/export';
     }
 });
-
-
